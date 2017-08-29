@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_tou"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/exo_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/player_play"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="216dp"
+        tools:layout_editor_absoluteY="275dp" />
+
+    <ImageView
+        android:id="@+id/exo_pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/player_pause"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="334dp"
+        tools:layout_editor_absoluteY="275dp" />
+
+    <ImageView
+        android:id="@+id/exo_ffwd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/player_ffward"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="107dp"
+        tools:layout_editor_absoluteY="59dp" />
+
+    <ImageView
+        android:id="@+id/exo_rew"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/player_reverse"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="197dp"
+        tools:layout_editor_absoluteY="41dp" />
+
+    <ImageView
+        android:id="@+id/exo_prev"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/exo_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/exo_repeat_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <TextView
+        android:id="@+id/exo_position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="进度"
+        app:layout_constraintEnd_toStartOf="@+id/exo_progress"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteY="333dp" />
+
+    <TextView
+        android:id="@+id/exo_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="总时长"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="543dp"
+        tools:layout_editor_absoluteY="333dp" />
+
+    <com.google.android.exoplayer2.ui.DefaultTimeBar
+        android:id="@+id/exo_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/exo_duration"
+        app:layout_constraintStart_toEndOf="@+id/exo_position"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteY="333dp" />
+
+</android.support.constraint.ConstraintLayout>

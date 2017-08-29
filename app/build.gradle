@@ -26,4 +26,13 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    //ExoPlayer
+    compile 'com.google.android.exoplayer:exoplayer:r2.5.1'
+    compile 'com.google.android.exoplayer:exoplayer-core:r2.5.1'
+    compile 'com.google.android.exoplayer:exoplayer-dash:r2.5.1'
+    compile 'com.google.android.exoplayer:exoplayer-ui:r2.5.1'
+//    compile 'com.google.android.exoplayer:exoplayer-hls:r2.5.1'
+
+    compile 'com.jiongbull:jlog:1.0.5'
+    compile 'com.zhy:okhttputils:2.6.2'
 }
