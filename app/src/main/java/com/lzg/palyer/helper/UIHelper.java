@@ -5,7 +5,7 @@ import android.net.Uri;
 import android.view.Gravity;
 import android.widget.Toast;
 
-import com.lzg.palyer.PlayerApplication;
+import com.lzg.palyer.applcation.PlayerApplication;
 import com.lzg.palyer.utils.StringUtil;
 
 /**
