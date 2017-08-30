@@ -12,6 +12,7 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
@@ -19,7 +20,6 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -33,9 +33,9 @@ import com.lzg.palyer.exo.PlayerControl;
 import com.lzg.palyer.helper.UIHelper;
 
 /**
- * http://asp.cntv.lxdns.com/asp/hls/main/0303000a/3/default/7432e61296394abe8bf17dcc5554ba00/main.m3u8?maxbr=850
+ *
  */
-public class MainActivity extends AppCompatActivity implements PlaybackControlView.VisibilityListener {
+public class MainActivity extends AppCompatActivity {
 
     private SimpleExoPlayerView simpleExoPlayerView;
     private SimpleExoPlayer player;
@@ -44,55 +44,44 @@ public class MainActivity extends AppCompatActivity implements PlaybackControlVi
     private Handler mainHandler = new Handler();
 
     private Context mContext;
+    private Uri[] uris;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         simpleExoPlayerView = findViewById(R.id.player_view);
-        simpleExoPlayerView.setControllerVisibilityListener(this);
         simpleExoPlayerView.requestFocus();
+        initializePlayer();
+//        startActivity(new Intent(new Intent(this, LoginActivity.class)));
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (Util.SDK_INT > 23) {
-            initializePlayer();
-        }
-    }
 
     @Override
     public void onResume() {
         super.onResume();
-        if ((Util.SDK_INT <= 23 || player == null)) {
-            initializePlayer();
+        if (player != null) {
+            //开始播放
+            player.setPlayWhenReady(true);
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (Util.SDK_INT <= 23) {
-            releasePlayer();
-        }
-    }
-
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (Util.SDK_INT > 23) {
-            releasePlayer();
+        if (player != null) {
+            //暂停播放
+            player.setPlayWhenReady(false);
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        releaseAdsLoader();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+        }
     }
-
 
     /**
      * 初始化播放器
@@ -109,22 +98,35 @@ public class MainActivity extends AppCompatActivity implements PlaybackControlVi
             eventLogger = new EventLogger(trackSelector);
             // 2. 创建播放器
             player = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector);
-
             // 绑定播放器到simpleExoPlayerView
             simpleExoPlayerView.setPlayer(player);
             //设置播放器的控制层
             simpleExoPlayerView.setControlDispatcher(new PlayerControl(this));
-
-
             // 默认带宽测量
             DefaultBandwidthMeter defaultBandwidthMeter = new DefaultBandwidthMeter();
             dataSourceFactory = new DefaultDataSourceFactory(mContext,
                     Util.getUserAgent(mContext, "ExoPlayerDemo"), defaultBandwidthMeter);
         }
-        Uri uri = Uri.parse("http://asp.cntv.lxdns.com/asp/hls/main/0303000a/3/default/7432e61296394abe8bf17dcc5554ba00/main.m3u8?maxbr=850");
-        MediaSource mediaSource = new HlsMediaSource(uri, dataSourceFactory, mainHandler, eventLogger);
-        // 准备播放
-        player.prepare(mediaSource);
+
+        String[] uriStrings = {"http://asp.cntv.lxdns.com/asp/hls/main/0303000a/3/default/7432e61296394abe8bf17dcc5554ba00/main.m3u8?maxbr=850",
+                "https://qavoda-media-m3u8.huanxi.com/vod/02a17925-dcc8-4a45-8be3-0c2653244ece.m3u8?pt=2&dt=3&ra=1",
+                "http://asp.cntv.lxdns.com/asp/hls/main/0303000a/3/default/7432e61296394abe8bf17dcc5554ba00/main.m3u8?maxbr=850",
+                "https://qavoda-media-m3u8.huanxi.com/vod/02a17925-dcc8-4a45-8be3-0c2653244ece.m3u8?pt=2&dt=3&ra=1"};
+        //播放地址的的集合
+        uris = new Uri[uriStrings.length];
+        for (int i = 0; i < uriStrings.length; i++) {
+            uris[i] = Uri.parse(uriStrings[i]);
+        }
+        //处理资源的集合
+        MediaSource[] mediaSources = new MediaSource[uris.length];
+        for (int i = 0; i < uris.length; i++) {
+            mediaSources[i] = new HlsMediaSource(uris[i], dataSourceFactory, mainHandler, eventLogger);
+        }
+        //串联Media资源（合并所有的播放资源）
+        MediaSource mediaSource = mediaSources.length == 1 ? mediaSources[0]
+                : new ConcatenatingMediaSource(mediaSources);
+        // 准备播放资源
+        player.prepare(mediaSource, false, true);
         // 自动播放
         player.setPlayWhenReady(true);
         player.addListener(new Player.EventListener() {
@@ -195,23 +197,8 @@ public class MainActivity extends AppCompatActivity implements PlaybackControlVi
      * 释放播放器
      */
     private void releasePlayer() {
-//        if (player != null) {
-//            player.release();
-//        }
-    }
-
-
-    private void releaseAdsLoader() {
         if (player != null) {
             player.release();
         }
-    }
-
-    /**
-     * @param visibility
-     */
-    @Override
-    public void onVisibilityChange(int visibility) {
-//        UIHelper.shortToast("onVisibilityChange");
     }
 }
