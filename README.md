@@ -1,6 +1,6 @@
 # Player
 
-![image](https://github.com/gzl003/Palyer/blob/master/img/device-2017-08-30-164747.png)
+![image](https://github.com/gzl003/Player/blob/master/img/device-2017-08-30-164747.png)
 
 
 
@@ -8,8 +8,7 @@
 * PlayerControl 的控制层自定义
 * 单个资源多个资源的播放方式
 
- * 播放器状态改变
- 
+# 播放器状态改变
  playWhenReady 是否开始播放 true 播放 false暂停     playbackState 播放器的状态
    
     @Override
