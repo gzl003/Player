@@ -1,6 +1,7 @@
 package com.lzg.player.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,12 +32,14 @@ import com.lzg.player.R;
 import com.lzg.player.exo.EventLogger;
 import com.lzg.player.exo.PlayerControl;
 import com.lzg.player.helper.UIHelper;
-import com.lzg.player.utils.StartUtils;
 
 /**
  * 播放页
  */
 public class PalyerActivity extends BaseActivity {
+
+    public static final String PLAY_URL = "play_url";
+    public static final String PLAY_URLS = "play_url_list";
 
     private SimpleExoPlayerView simpleExoPlayerView;
     private SimpleExoPlayer player;
@@ -46,9 +49,21 @@ public class PalyerActivity extends BaseActivity {
 
     private Context mContext;
     private Uri[] uris;
+    private String playurl;
+    private String[] playurls;
 
-    public static void launch(Context mContext){
-        StartUtils.startActivity(mContext, PalyerActivity.class);
+    public static void launch(Context mContext, String url) {
+        Intent intent = new Intent(mContext, PalyerActivity.class);
+        intent.putExtra(PLAY_URL, url);
+        mContext.startActivity(intent);
+//        StartUtils.startActivity(mContext, PalyerActivity.class);
+    }
+
+    public static void launch(Context mContext, String[] url) {
+        Intent intent = new Intent(mContext, PalyerActivity.class);
+        intent.putExtra(PLAY_URLS, url);
+        mContext.startActivity(intent);
+//        StartUtils.startActivity(mContext, PalyerActivity.class);
     }
 
     @Override
@@ -57,6 +72,8 @@ public class PalyerActivity extends BaseActivity {
         setContentView(R.layout.activity_palyer);
         simpleExoPlayerView = findViewById(R.id.player_view);
         simpleExoPlayerView.requestFocus();
+        playurl = getIntent().getStringExtra(PLAY_URL);
+        playurls = getIntent().getStringArrayExtra(PLAY_URLS);
         initializePlayer();
 //        startActivity(new Intent(new Intent(this, LoginActivity.class)));
     }
@@ -112,16 +129,18 @@ public class PalyerActivity extends BaseActivity {
                     Util.getUserAgent(mContext, "ExoPlayerDemo"), defaultBandwidthMeter);
             simpleExoPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);//设置视频的填充类型
         }
-
-        String[] uriStrings = {"http://asp.cntv.lxdns.com/asp/hls/main/0303000a/3/default/7432e61296394abe8bf17dcc5554ba00/main.m3u8?maxbr=850",
-                "https://qavoda-media-m3u8.huanxi.com/vod/02a17925-dcc8-4a45-8be3-0c2653244ece.m3u8?pt=2&dt=3&ra=1",
-                "http://asp.cntv.lxdns.com/asp/hls/main/0303000a/3/default/7432e61296394abe8bf17dcc5554ba00/main.m3u8?maxbr=850",
-                "https://qavoda-media-m3u8.huanxi.com/vod/02a17925-dcc8-4a45-8be3-0c2653244ece.m3u8?pt=2&dt=3&ra=1"};
-        //播放地址的的集合
-        uris = new Uri[uriStrings.length];
-        for (int i = 0; i < uriStrings.length; i++) {
-            uris[i] = Uri.parse(uriStrings[i]);
+        if (playurls != null && playurls.length > 0) {
+            uris = new Uri[playurls.length];
+            for (int i = 0; i < playurls.length; i++) {
+                uris[i] = Uri.parse(playurls[i]);
+            }
+        } else {
+            uris = new Uri[1];
+            uris[0] = Uri.parse(playurl);
         }
+
+        //播放地址的的集合
+
         //处理资源的集合
         MediaSource[] mediaSources = new MediaSource[uris.length];
         for (int i = 0; i < uris.length; i++) {

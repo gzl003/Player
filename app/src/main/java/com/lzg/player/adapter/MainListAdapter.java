@@ -17,9 +17,11 @@ import com.lzg.player.item.MainlistItem;
 public class MainListAdapter extends RecyclerView.Adapter<MainlistItem> {
 
     private Context mContext;
+    private String[] uris;
 
-    public MainListAdapter(Context context) {
+    public MainListAdapter(Context context, String[] uris) {
         this.mContext = context;
+        this.uris = uris;
     }
 
     @Override
@@ -28,18 +30,18 @@ public class MainListAdapter extends RecyclerView.Adapter<MainlistItem> {
     }
 
     @Override
-    public void onBindViewHolder(MainlistItem holder, int position) {
-        holder.itemText.setText("" + position);
+    public void onBindViewHolder(MainlistItem holder, final int position) {
+        holder.itemText.setText("" + uris[position]);
         holder.itemText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PalyerActivity.launch(mContext);
+                PalyerActivity.launch(mContext,uris[position]);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return 10;
+        return uris == null ? 0 : uris.length;
     }
 }
