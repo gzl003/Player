@@ -36,4 +36,6 @@ dependencies {
 
     compile 'com.jiongbull:jlog:1.0.5'
     compile 'com.zhy:okhttputils:2.6.2'
+    compile 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 }
