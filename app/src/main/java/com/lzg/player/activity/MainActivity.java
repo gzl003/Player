@@ -20,6 +20,7 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -106,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
             DefaultBandwidthMeter defaultBandwidthMeter = new DefaultBandwidthMeter();
             dataSourceFactory = new DefaultDataSourceFactory(mContext,
                     Util.getUserAgent(mContext, "ExoPlayerDemo"), defaultBandwidthMeter);
+            simpleExoPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);//设置视频的填充类型
         }
 
         String[] uriStrings = {"http://asp.cntv.lxdns.com/asp/hls/main/0303000a/3/default/7432e61296394abe8bf17dcc5554ba00/main.m3u8?maxbr=850",
@@ -194,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
         player.setAudioDebugListener(eventLogger);
         player.setVideoDebugListener(eventLogger);
         player.setMetadataOutput(eventLogger);
+
     }
 
     /**
