@@ -143,6 +143,7 @@
     <orderEntry type="library" name="transition-26.0.1" level="project" />
     <orderEntry type="library" scope="TEST" name="jsr305-2.0.1" level="project" />
     <orderEntry type="library" scope="TEST" name="runner-1.0.1" level="project" />
+    <orderEntry type="library" name="butterknife-annotations-8.8.1" level="project" />
     <orderEntry type="library" name="support-compat-26.0.1" level="project" />
     <orderEntry type="library" name="constraint-layout-solver-1.0.2" level="project" />
     <orderEntry type="library" name="exoplayer-smoothstreaming-r2.5.1" level="project" />
@@ -164,5 +165,6 @@
     <orderEntry type="library" name="design-26.0.1" level="project" />
     <orderEntry type="library" scope="TEST" name="rules-1.0.1" level="project" />
     <orderEntry type="library" name="okhttputils-2.6.2" level="project" />
+    <orderEntry type="library" name="butterknife-8.8.1" level="project" />
   </component>
 </module>
