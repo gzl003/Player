@@ -1,11 +1,16 @@
 package com.lzg.player.exo;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -17,6 +22,7 @@ import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -40,6 +46,7 @@ import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.RepeatModeUtil;
 import com.google.android.exoplayer2.util.Util;
+import com.lzg.player.utils.DeviceUtils;
 
 import java.util.List;
 
@@ -73,6 +80,9 @@ public class ExoPlayerView extends FrameLayout {
 
     private float moveX;
     private float moveY;
+    private Activity activity;
+    private boolean portrait;
+//    private boolean fullScreenOnly;
 
     public ExoPlayerView(Context context) {
         this(context, null);
@@ -84,6 +94,7 @@ public class ExoPlayerView extends FrameLayout {
 
     public ExoPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        activity = (Activity) context;
 
         if (isInEditMode()) {
             contentFrame = null;
@@ -783,6 +794,78 @@ public class ExoPlayerView extends FrameLayout {
         @Override
         public void onTimelineChanged(Timeline timeline, Object manifest) {
             // Do nothing.
+        }
+
+    }
+
+    private Handler handler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+
+            }
+
+    };
+
+    /**
+     * 监听全屏跟非全屏
+     * @param newConfig
+     */
+    @Override
+    public void onConfigurationChanged(final Configuration newConfig) {
+        portrait = newConfig.orientation == Configuration.ORIENTATION_PORTRAIT;
+        doOnConfigurationChanged(portrait);
+    }
+    /**
+     * 当竖横屏切换时处理视频窗口
+     * @param portrait
+     */
+    private void doOnConfigurationChanged(final boolean portrait) {
+        if (player != null/* && !fullScreenOnly*/) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    setFullScreen(!portrait);
+                    if (portrait) {
+                        int screenWidth = DeviceUtils.deviceWidth(activity);
+                        ViewGroup.LayoutParams layoutParams = getLayoutParams();
+                        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                        layoutParams.width = screenWidth;
+                        layoutParams.height = screenWidth * 9 / 16;
+                        setLayoutParams(layoutParams);
+                        requestLayout();
+                    } else {
+                        int heightPixels = activity.getResources().getDisplayMetrics().heightPixels;
+                        int widthPixels = activity.getResources().getDisplayMetrics().widthPixels;
+                        ViewGroup.LayoutParams layoutParams = getLayoutParams();
+                        layoutParams.height = heightPixels;
+                        layoutParams.width = widthPixels;
+                        setLayoutParams(layoutParams);
+                    }
+                }
+            });
+
+        }
+    }
+
+    /**
+     * 主动使窗口横竖屏切换
+     * @param fullScreen
+     */
+    private void setFullScreen(boolean fullScreen) {
+        if (activity != null) {
+            WindowManager.LayoutParams attrs = activity.getWindow()
+                    .getAttributes();
+            if (fullScreen) {
+                attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+                activity.getWindow().setAttributes(attrs);
+                activity.getWindow().addFlags(
+                        WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            } else {
+                attrs.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                activity.getWindow().setAttributes(attrs);
+                activity.getWindow().clearFlags(
+                        WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            }
         }
 
     }

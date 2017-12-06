@@ -2,6 +2,7 @@ package com.lzg.player.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -218,6 +219,17 @@ public class PalyerActivity extends BaseActivity {
         player.setVideoDebugListener(eventLogger);
         player.setMetadataOutput(eventLogger);
 
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        if(simpleExoPlayerView!= null && player != null){
+            simpleExoPlayerView.onConfigurationChanged(newConfig);
+
+
+        }
+
+        super.onConfigurationChanged(newConfig);
     }
 
     /**
