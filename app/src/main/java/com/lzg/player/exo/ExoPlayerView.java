@@ -567,7 +567,7 @@ public class ExoPlayerView extends FrameLayout {
             case MotionEvent.ACTION_UP:
                 Log.e("Exoplayer", "TranslationX >>>   " + getX() + (ev.getX() - moveX));
                 Log.e("Exoplayer", "TranslationY >>>   " + getY() + (ev.getY() - moveY));
-                
+
                 break;
             case MotionEvent.ACTION_CANCEL:
                 break;
