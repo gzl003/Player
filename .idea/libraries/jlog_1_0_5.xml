@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="jlog-1.0.5">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/jlog-1.0.5.aar/d5a77d7ed1e5a99d59300d46c02f5e1b/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/jlog-1.0.5.aar/d5a77d7ed1e5a99d59300d46c02f5e1b/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/jlog-1.0.5.aar/240a3755ada2bde4b165e33797e7304c/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/jlog-1.0.5.aar/240a3755ada2bde4b165e33797e7304c/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

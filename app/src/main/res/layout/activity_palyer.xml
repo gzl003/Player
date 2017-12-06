@@ -6,9 +6,18 @@
     android:layout_height="match_parent"
     tools:context="com.lzg.player.activity.PalyerActivity">
 
-    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
-        android:id="@+id/player_view"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <com.lzg.player.exo.ExoPlayerView
+            android:id="@+id/player_view"
+            android:layout_width="match_parent"
+            android:layout_height="270dp"
+            app:resize_mode="fixed_width"
+            app:surface_type="surface_view"
+            app:use_artwork="true" />
+    </FrameLayout>
+
 
 </android.support.constraint.ConstraintLayout>

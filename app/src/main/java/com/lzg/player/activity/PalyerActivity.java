@@ -20,8 +20,6 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -30,6 +28,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.jiongbull.jlog.JLog;
 import com.lzg.player.R;
 import com.lzg.player.exo.EventLogger;
+import com.lzg.player.exo.ExoPlayerView;
 import com.lzg.player.exo.PlayerControl;
 import com.lzg.player.helper.UIHelper;
 
@@ -41,7 +40,7 @@ public class PalyerActivity extends BaseActivity {
     public static final String PLAY_URL = "play_url";
     public static final String PLAY_URLS = "play_url_list";
 
-    private SimpleExoPlayerView simpleExoPlayerView;
+    private ExoPlayerView simpleExoPlayerView;
     private SimpleExoPlayer player;
     private DataSource.Factory dataSourceFactory;
     private EventLogger eventLogger;
@@ -127,7 +126,7 @@ public class PalyerActivity extends BaseActivity {
             DefaultBandwidthMeter defaultBandwidthMeter = new DefaultBandwidthMeter();
             dataSourceFactory = new DefaultDataSourceFactory(mContext,
                     Util.getUserAgent(mContext, "ExoPlayerDemo"), defaultBandwidthMeter);
-            simpleExoPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);//设置视频的填充类型
+//            simpleExoPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);//设置视频的填充类型
         }
         if (playurls != null && playurls.length > 0) {
             uris = new Uri[playurls.length];

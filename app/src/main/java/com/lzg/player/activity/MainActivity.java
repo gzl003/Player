@@ -32,6 +32,7 @@ public class MainActivity extends BaseActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new MainListAdapter(this,uriStrings));
+        PalyerActivity.launch(mContext,uriStrings);
     }
 
     @Override
