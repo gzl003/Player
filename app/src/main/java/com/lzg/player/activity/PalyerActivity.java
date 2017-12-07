@@ -6,6 +6,10 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.MotionEvent;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -28,10 +32,12 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.jiongbull.jlog.JLog;
 import com.lzg.player.R;
+import com.lzg.player.adapter.MainListAdapter;
 import com.lzg.player.exo.EventLogger;
 import com.lzg.player.exo.ExoPlayerView;
 import com.lzg.player.exo.PlayerControl;
 import com.lzg.player.helper.UIHelper;
+import com.lzg.player.imple.PlayerMovieListener;
 
 /**
  * 播放页
@@ -40,6 +46,17 @@ public class PalyerActivity extends BaseActivity {
 
     public static final String PLAY_URL = "play_url";
     public static final String PLAY_URLS = "play_url_list";
+    private String[] playurls = {"http://asp.cntv.lxdns.com/asp/hls/main/0303000a/3/default/7432e61296394abe8bf17dcc5554ba00/main.m3u8?maxbr=850",
+            "https://qavoda-media-m3u8.huanxi.com/vod/02a17925-dcc8-4a45-8be3-0c2653244ece.m3u8?pt=2&dt=3&ra=1",
+            "http://asp.cntv.lxdns.com/asp/hls/main/0303000a/3/default/7432e61296394abe8bf17dcc5554ba00/main.m3u8?maxbr=850",
+            "https://qavoda-media-m3u8.huanxi.com/vod/02a17925-dcc8-4a45-8be3-0c2653244ece.m3u8?pt=2&dt=3&ra=1",
+            "http://asp.cntv.lxdns.com/asp/hls/main/0303000a/3/default/7432e61296394abe8bf17dcc5554ba00/main.m3u8?maxbr=850",
+            "https://qavoda-media-m3u8.huanxi.com/vod/02a17925-dcc8-4a45-8be3-0c2653244ece.m3u8?pt=2&dt=3&ra=1",
+            "http://asp.cntv.lxdns.com/asp/hls/main/0303000a/3/default/7432e61296394abe8bf17dcc5554ba00/main.m3u8?maxbr=850",
+            "https://qavoda-media-m3u8.huanxi.com/vod/02a17925-dcc8-4a45-8be3-0c2653244ece.m3u8?pt=2&dt=3&ra=1", "http://asp.cntv.lxdns.com/asp/hls/main/0303000a/3/default/7432e61296394abe8bf17dcc5554ba00/main.m3u8?maxbr=850",
+            "https://qavoda-media-m3u8.huanxi.com/vod/02a17925-dcc8-4a45-8be3-0c2653244ece.m3u8?pt=2&dt=3&ra=1",
+            "http://asp.cntv.lxdns.com/asp/hls/main/0303000a/3/default/7432e61296394abe8bf17dcc5554ba00/main.m3u8?maxbr=850",
+            "https://qavoda-media-m3u8.huanxi.com/vod/02a17925-dcc8-4a45-8be3-0c2653244ece.m3u8?pt=2&dt=3&ra=1"};
 
     private ExoPlayerView simpleExoPlayerView;
     private SimpleExoPlayer player;
@@ -47,10 +64,12 @@ public class PalyerActivity extends BaseActivity {
     private EventLogger eventLogger;
     private Handler mainHandler = new Handler();
 
+    private RecyclerView recyclerView;
+
     private Context mContext;
     private Uri[] uris;
     private String playurl;
-    private String[] playurls;
+//    private String[] playurls;
 
     public static void launch(Context mContext, String url) {
         Intent intent = new Intent(mContext, PalyerActivity.class);
@@ -72,10 +91,17 @@ public class PalyerActivity extends BaseActivity {
         setContentView(R.layout.activity_palyer);
         simpleExoPlayerView = findViewById(R.id.player_view);
         simpleExoPlayerView.requestFocus();
-        playurl = getIntent().getStringExtra(PLAY_URL);
-        playurls = getIntent().getStringArrayExtra(PLAY_URLS);
+        recyclerView = findViewById(R.id.recyclerView);
+//        playurl = getIntent().getStringExtra(PLAY_URL);
+//        playurls = getIntent().getStringArrayExtra(PLAY_URLS);
         initializePlayer();
+        initRecycleView();
 //        startActivity(new Intent(new Intent(this, LoginActivity.class)));
+    }
+
+    private void initRecycleView() {
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        recyclerView.setAdapter(new MainListAdapter(this, playurls));
     }
 
     @Override
@@ -219,16 +245,15 @@ public class PalyerActivity extends BaseActivity {
         player.setVideoDebugListener(eventLogger);
         player.setMetadataOutput(eventLogger);
 
+        //设置移动监听
+        simpleExoPlayerView.setMoveListener(movieListener);
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        if(simpleExoPlayerView!= null && player != null){
+        if (simpleExoPlayerView != null && player != null) {
             simpleExoPlayerView.onConfigurationChanged(newConfig);
-
-
         }
-
         super.onConfigurationChanged(newConfig);
     }
 
@@ -240,4 +265,33 @@ public class PalyerActivity extends BaseActivity {
             player.release();
         }
     }
+
+    float moveY;
+
+    private PlayerMovieListener movieListener = new PlayerMovieListener() {
+
+        @Override
+        public void onPlayerDown(MotionEvent ev) {
+            moveY = ev.getY();
+            Log.e("Exoplayer", "onPlayerDown >>>   " + ev.getY());
+        }
+
+        @Override
+        public void onPlayerMovie(MotionEvent ev, float move) {
+
+            recyclerView.setTranslationY(move);
+            recyclerView.setAlpha(1.1f - (move / moveY));
+//            recyclerView.setScaleY
+        }
+
+        @Override
+        public void onPayerUp(MotionEvent ev) {
+//            if (recDy > recyclerView.getY()) {
+//                recyclerView.setVisibility(View.GONE);
+//            } else {
+//                recyclerView.setVisibility(View.VISIBLE);
+//            }
+
+        }
+    };
 }

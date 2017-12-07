@@ -1,5 +1,6 @@
 package com.lzg.player.exo;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -14,7 +15,6 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -46,6 +46,7 @@ import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.RepeatModeUtil;
 import com.google.android.exoplayer2.util.Util;
+import com.lzg.player.imple.PlayerMovieListener;
 import com.lzg.player.utils.DeviceUtils;
 
 import java.util.List;
@@ -82,7 +83,8 @@ public class ExoPlayerView extends FrameLayout {
     private float moveY;
     private Activity activity;
     private boolean portrait;
-//    private boolean fullScreenOnly;
+    //    private boolean fullScreenOnly;
+    private PlayerMovieListener movieListener;
 
     public ExoPlayerView(Context context) {
         this(context, null);
@@ -564,21 +566,30 @@ public class ExoPlayerView extends FrameLayout {
         return subtitleView;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 moveX = ev.getX();
                 moveY = ev.getY();
+                if (movieListener != null) {
+                    movieListener.onPlayerDown(ev);
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
-                setTranslationX(getX() + (ev.getX() - moveX));
+//                setTranslationX(getX() + (ev.getX() - moveX));
                 setTranslationY(getY() + (ev.getY() - moveY));
+                if (movieListener != null) {
+                    movieListener.onPlayerMovie(ev,getY() + (ev.getY() - moveY));
+                }
                 break;
             case MotionEvent.ACTION_UP:
-                Log.e("Exoplayer", "TranslationX >>>   " + getX() + (ev.getX() - moveX));
-                Log.e("Exoplayer", "TranslationY >>>   " + getY() + (ev.getY() - moveY));
-
+//                Log.e("Exoplayer", "TranslationX >>>   " + getX() + (ev.getX() - moveX));
+//                Log.e("Exoplayer", "TranslationY >>>   " + getY() + (ev.getY() - moveY));
+                if (movieListener != null) {
+                    movieListener.onPayerUp(ev);
+                }
                 break;
             case MotionEvent.ACTION_CANCEL:
                 break;
@@ -802,12 +813,13 @@ public class ExoPlayerView extends FrameLayout {
         @Override
         public void handleMessage(Message msg) {
 
-            }
+        }
 
     };
 
     /**
      * 监听全屏跟非全屏
+     *
      * @param newConfig
      */
     @Override
@@ -815,8 +827,10 @@ public class ExoPlayerView extends FrameLayout {
         portrait = newConfig.orientation == Configuration.ORIENTATION_PORTRAIT;
         doOnConfigurationChanged(portrait);
     }
+
     /**
      * 当竖横屏切换时处理视频窗口
+     *
      * @param portrait
      */
     private void doOnConfigurationChanged(final boolean portrait) {
@@ -849,6 +863,7 @@ public class ExoPlayerView extends FrameLayout {
 
     /**
      * 主动使窗口横竖屏切换
+     *
      * @param fullScreen
      */
     private void setFullScreen(boolean fullScreen) {
@@ -868,5 +883,9 @@ public class ExoPlayerView extends FrameLayout {
             }
         }
 
+    }
+
+    public void setMoveListener(PlayerMovieListener movieListener) {
+        this.movieListener = movieListener;
     }
 }
