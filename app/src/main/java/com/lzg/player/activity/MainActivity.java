@@ -18,9 +18,7 @@ public class MainActivity extends BaseActivity {
     RecyclerView recyclerView;
 
     private String[] uriStrings = {"http://asp.cntv.lxdns.com/asp/hls/main/0303000a/3/default/7432e61296394abe8bf17dcc5554ba00/main.m3u8?maxbr=850",
-            "https://qavoda-media-m3u8.huanxi.com/vod/02a17925-dcc8-4a45-8be3-0c2653244ece.m3u8?pt=2&dt=3&ra=1",
-            "http://asp.cntv.lxdns.com/asp/hls/main/0303000a/3/default/7432e61296394abe8bf17dcc5554ba00/main.m3u8?maxbr=850",
-            "https://qavoda-media-m3u8.huanxi.com/vod/02a17925-dcc8-4a45-8be3-0c2653244ece.m3u8?pt=2&dt=3&ra=1"};
+            "https://agmeijucdnvideo.ixibeiren.com/AGMTV/HFnej55k21/index.m3u8"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,10 +27,8 @@ public class MainActivity extends BaseActivity {
     }
 
     public void setupView() {
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new MainListAdapter(this,uriStrings));
-        PalyerActivity.launch(mContext,uriStrings);
     }
 
     @Override

@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="com.jiongbull:jlog-1.0.5">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/jlog-1.0.5.aar/7ec61aefb2f3e187b5932c90c36b01ea/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/jlog-1.0.5.aar/7ec61aefb2f3e187b5932c90c36b01ea/res" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jiongbull/jlog/1.0.5/e2ca08fcf59c4925e35323bedc25616b973caa32/jlog-1.0.5-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jiongbull/jlog/1.0.5/ecb5b0e89e7c45892c3412b5bd05573cf62add18/jlog-1.0.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
