@@ -4,24 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context="com.lzg.player.activity.PalyerActivity"
     tools:ignore="MissingConstraints">
 
 
-        <com.lzg.player.exo.ExoPlayerView
-            android:id="@+id/player_view"
-            android:layout_width="match_parent"
-            android:layout_height="270dp"
-            app:resize_mode="fixed_width"
-            app:surface_type="surface_view"
-            app:use_artwork="true" />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/player_view" />
-
+    <com.lzg.player.exo.ExoPlayerView
+        android:id="@+id/player_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        app:resize_mode="fixed_width"
+        app:surface_type="surface_view"
+        app:use_artwork="true" />
 
 
 </RelativeLayout>

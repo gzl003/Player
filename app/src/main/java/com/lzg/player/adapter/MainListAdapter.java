@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import com.lzg.player.R;
 import com.lzg.player.activity.PalyerActivity;
 import com.lzg.player.item.MainlistItem;
+import com.lzg.player.modle.MediaItem;
+
+import java.util.List;
 
 /**
  *  * Created by 智光 on 2017/9/12 11:50
@@ -17,9 +20,9 @@ import com.lzg.player.item.MainlistItem;
 public class MainListAdapter extends RecyclerView.Adapter<MainlistItem> {
 
     private Context mContext;
-    private String[] uris;
+    private List<MediaItem> uris;
 
-    public MainListAdapter(Context context, String[] uris) {
+    public MainListAdapter(Context context, List<MediaItem> uris) {
         this.mContext = context;
         this.uris = uris;
     }
@@ -31,17 +34,20 @@ public class MainListAdapter extends RecyclerView.Adapter<MainlistItem> {
 
     @Override
     public void onBindViewHolder(MainlistItem holder, final int position) {
-        holder.itemText.setText("" + uris[position]);
-        holder.itemText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PalyerActivity.launch(mContext,uris[position]);
-            }
-        });
+        MediaItem mediaItem = uris.get(position);
+        if (mediaItem != null) {
+            holder.itemText.setText(mediaItem.name);
+            holder.itemText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    PalyerActivity.launch(mContext, position);
+                }
+            });
+        }
     }
 
     @Override
     public int getItemCount() {
-        return uris == null ? 0 : uris.length;
+        return uris == null ? 0 : uris.size();
     }
 }

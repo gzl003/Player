@@ -1,15 +1,13 @@
 package com.lzg.player.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.MotionEvent;
+import android.view.View;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -17,7 +15,6 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
@@ -25,6 +22,7 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -32,22 +30,24 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.jiongbull.jlog.JLog;
 import com.lzg.player.R;
-import com.lzg.player.adapter.MainListAdapter;
 import com.lzg.player.exo.EventLogger;
 import com.lzg.player.exo.ExoPlayerView;
 import com.lzg.player.exo.PlayerControl;
 import com.lzg.player.helper.UIHelper;
-import com.lzg.player.imple.PlayerMovieListener;
+import com.lzg.player.modle.MovieRsource;
+import com.lzg.player.modle.MediaItem;
+
+import java.util.List;
 
 /**
  * 播放页
  */
 public class PalyerActivity extends BaseActivity {
 
-    public static final String PLAY_URL = "play_url";
-    public static final String PLAY_URLS = "play_url_list";
-    private String[] playurls = {"http://asp.cntv.lxdns.com/asp/hls/main/0303000a/3/default/7432e61296394abe8bf17dcc5554ba00/main.m3u8?maxbr=850",
-            "https://agmeijucdnvideo.ixibeiren.com/AGMTV/HFnej55k21/index.m3u8"};
+    public static final String POSITION = "position";
+    private List<MediaItem> playurls;
+    private MovieRsource movieRsource;
+    private int position;
 
     private ExoPlayerView simpleExoPlayerView;
     private SimpleExoPlayer player;
@@ -55,25 +55,12 @@ public class PalyerActivity extends BaseActivity {
     private EventLogger eventLogger;
     private Handler mainHandler = new Handler();
 
-    private RecyclerView recyclerView;
-
     private Context mContext;
-    private Uri[] uris;
-    private String playurl;
-//    private String[] playurls;
 
-    public static void launch(Context mContext, String url) {
+    public static void launch(Context mContext, int position) {
         Intent intent = new Intent(mContext, PalyerActivity.class);
-        intent.putExtra(PLAY_URL, url);
+        intent.putExtra(POSITION, position);
         mContext.startActivity(intent);
-//        StartUtils.startActivity(mContext, PalyerActivity.class);
-    }
-
-    public static void launch(Context mContext, String[] url) {
-        Intent intent = new Intent(mContext, PalyerActivity.class);
-        intent.putExtra(PLAY_URLS, url);
-        mContext.startActivity(intent);
-//        StartUtils.startActivity(mContext, PalyerActivity.class);
     }
 
     @Override
@@ -81,18 +68,12 @@ public class PalyerActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_palyer);
         simpleExoPlayerView = findViewById(R.id.player_view);
-        simpleExoPlayerView.requestFocus();
-        recyclerView = findViewById(R.id.recyclerView);
-//        playurl = getIntent().getStringExtra(PLAY_URL);
-//        playurls = getIntent().getStringArrayExtra(PLAY_URLS);
+//        simpleExoPlayerView.requestFocus();
+        movieRsource = new MovieRsource();
+        playurls = movieRsource.getMovislist();
+        position = getIntent().getIntExtra(POSITION, 0);
         initializePlayer();
-        initRecycleView();
 //        startActivity(new Intent(new Intent(this, LoginActivity.class)));
-    }
-
-    private void initRecycleView() {
-        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        recyclerView.setAdapter(new MainListAdapter(this, playurls));
     }
 
     @Override
@@ -144,30 +125,26 @@ public class PalyerActivity extends BaseActivity {
             DefaultBandwidthMeter defaultBandwidthMeter = new DefaultBandwidthMeter();
             dataSourceFactory = new DefaultDataSourceFactory(mContext,
                     Util.getUserAgent(mContext, "ExoPlayerDemo"), defaultBandwidthMeter);
-//            simpleExoPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);//设置视频的填充类型
-        }
-        if (playurls != null && playurls.length > 0) {
-            uris = new Uri[playurls.length];
-            for (int i = 0; i < playurls.length; i++) {
-                uris[i] = Uri.parse(playurls[i]);
-            }
-        } else {
-            uris = new Uri[1];
-            uris[0] = Uri.parse(playurl);
+            simpleExoPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);//设置视频的填充类型
         }
 
         //播放地址的的集合
 
         //处理资源的集合
-        MediaSource[] mediaSources = new MediaSource[uris.length];
-        for (int i = 0; i < uris.length; i++) {
-            mediaSources[i] = new HlsMediaSource(uris[i], dataSourceFactory, mainHandler, eventLogger);
+        MediaSource[] mediaSources;
+        if (playurls != null && playurls.size() > 0) {
+            mediaSources = new MediaSource[playurls.size()];
+            for (int i = 0; i < playurls.size(); i++) {
+                mediaSources[i] = new HlsMediaSource(playurls.get(i).murl, dataSourceFactory, mainHandler, eventLogger);
+            }
+            //串联Media资源（合并所有的播放资源）
+//            MediaSource mediaSource = mediaSources.length == 1 ? mediaSources[position] : new ConcatenatingMediaSource(mediaSources);
+//            // 准备播放资源
+//            player.prepare(mediaSource, false, true);
+            //准备播放单个资源
+            player.prepare(mediaSources[position]);
+
         }
-        //串联Media资源（合并所有的播放资源）
-        MediaSource mediaSource = mediaSources.length == 1 ? mediaSources[0]
-                : new ConcatenatingMediaSource(mediaSources);
-        // 准备播放资源
-        player.prepare(mediaSource, false, true);
         // 自动播放
         player.setPlayWhenReady(true);
         player.addListener(new Player.EventListener() {
@@ -237,7 +214,7 @@ public class PalyerActivity extends BaseActivity {
         player.setMetadataOutput(eventLogger);
 
         //设置移动监听
-        simpleExoPlayerView.setMoveListener(movieListener);
+//        simpleExoPlayerView.setMoveListener(movieListener);
     }
 
     @Override
@@ -257,32 +234,20 @@ public class PalyerActivity extends BaseActivity {
         }
     }
 
-    float moveY;
-
-    private PlayerMovieListener movieListener = new PlayerMovieListener() {
-
-        @Override
-        public void onPlayerDown(MotionEvent ev) {
-            moveY = ev.getY();
-            Log.e("Exoplayer", "onPlayerDown >>>   " + ev.getY());
+    @SuppressLint("ObsoleteSdkInt")
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && Build.VERSION.SDK_INT >= 19) {
+            View decorView = getWindow().getDecorView();
+            decorView.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
+    }
 
-        @Override
-        public void onPlayerMovie(MotionEvent ev, float move) {
-
-            recyclerView.setTranslationY(move);
-            recyclerView.setAlpha(1.1f - (move / moveY));
-//            recyclerView.setScaleY
-        }
-
-        @Override
-        public void onPayerUp(MotionEvent ev) {
-//            if (recDy > recyclerView.getY()) {
-//                recyclerView.setVisibility(View.GONE);
-//            } else {
-//                recyclerView.setVisibility(View.VISIBLE);
-//            }
-
-        }
-    };
 }

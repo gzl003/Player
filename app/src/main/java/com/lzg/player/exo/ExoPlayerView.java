@@ -579,8 +579,8 @@ public class ExoPlayerView extends FrameLayout {
                 break;
             case MotionEvent.ACTION_MOVE:
 //                setTranslationX(getX() + (ev.getX() - moveX));
-                setTranslationY(getY() + (ev.getY() - moveY));
                 if (movieListener != null) {
+                    setTranslationY(getY() + (ev.getY() - moveY));
                     movieListener.onPlayerMovie(ev,getY() + (ev.getY() - moveY));
                 }
                 break;

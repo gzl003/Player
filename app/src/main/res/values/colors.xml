@@ -6,4 +6,6 @@
     <color name="color_tou">#66333333</color>
     <color name="transparent">#0000</color>
     <color name="black">#ffffff</color>
+    <color name="white">#000000</color>
+    <color name="line_color">#f5f5f5</color>
 </resources>

@@ -6,13 +6,16 @@
     android:background="@color/black"
     tools:context="com.lzg.player.activity.MainActivity">
 
-        <TextView
-            android:id="@+id/item_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="@string/action_sign_in"
-            android:textSize="16sp" />
+    <TextView
+        android:id="@+id/item_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:lines="2"
+        android:maxLines="2"
+        android:padding="10dp"
+        android:text="@string/action_sign_in"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
 
 </android.support.constraint.ConstraintLayout>
