@@ -11,6 +11,7 @@ import com.lzg.player.adapter.MainListAdapter;
 import com.lzg.player.modle.MovieRsource;
 import com.lzg.player.modle.RemoteMovie;
 import com.lzg.player.utils.JsonUtil;
+import com.lzg.player.utils.SharedPreferencesUtils;
 import com.socks.library.KLog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -26,6 +27,7 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.main_list)
     RecyclerView recyclerView;
     private MovieRsource movieRsource;
+    private RemoteMovie remoteMovie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +46,16 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void onError(Call call, Exception e, int id) {
                         KLog.e(e.getMessage());
+                        remoteMovie = (RemoteMovie) SharedPreferencesUtils.readObject(MainActivity.this, RemoteMovie.MOVIE_LISY);
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
                         KLog.e(response);
-                        RemoteMovie remoteMovie = JsonUtil.fromJson(response, RemoteMovie.class);
+                        remoteMovie = JsonUtil.fromJson(response, RemoteMovie.class);
+                        if (remoteMovie != null) {
+                            SharedPreferencesUtils.saveObject(MainActivity.this, RemoteMovie.MOVIE_LISY, remoteMovie);
+                        }
                     }
                 });
     }

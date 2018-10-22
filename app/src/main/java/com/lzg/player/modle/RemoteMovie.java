@@ -9,6 +9,8 @@ import java.util.List;
  */
 
 public class RemoteMovie implements Serializable {
+    public static final String MOVIE_LISY = "movielist";
+
     public List<RemoteMovie> list;
     public String name;
     public String url;
